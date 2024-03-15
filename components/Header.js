@@ -10,7 +10,7 @@ const Header = () => {
 					source='https://avatars.githubusercontent.com/u/4259630?v=4'
 				/>
 			</View>
-			<Text style={styles.boasvindas}>Renan Cavichi</Text>
+			<Text style={styles.boasvindas}>João Gabriel</Text>
 		</View>
 	)
 }
