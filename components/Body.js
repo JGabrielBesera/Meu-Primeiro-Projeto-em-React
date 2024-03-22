@@ -1,104 +1,70 @@
-import { View, StyleSheet, Text, FlatList } from 'react-native'
+import {View, StyleSheet, FlatList, Text} from 'react-native'
 import { useEffect, useState } from 'react'
 import H1 from './ui/H1'
-import Button from './ui/Button'
 import CardUser from './CardUser'
-import CardProduct from './CardProduct'
-
-
+import Button from './ui/Button'
+import { useNavigation } from '@react-navigation/native'
+import Header from './Header'
 
 const Body = () => {
-
-  const [products, setProducts] = useState([])
   const [users, setUsers] = useState([])
-  const [counter, setCounter] = useState(0)
+  const navigation = useNavigation()
 
   const getUsers = async () => {
-    try {
-      const result = await fetch('https://backend2-ep3w.onrender.com/user');
-      const data = await result.json();
-      console.log(data);
+    try{
+      const result = await fetch('https://backend-api-express-1sem2024-rbd1.onrender.com/user?34')
+      const data = await result.json()
+      console.log(data.success)
       setUsers(data.users)
-    } catch (error) {
-      console.log(error.message)
+    } catch (error){
+      console.log('Error getUsers ' + error.message)
     }
   }
 
-  const getProducts = async () => {
-    try {
-      const result = await fetch('https://backend2-ep3w.onrender.com/product');
-      const data = await result.json();
-      setProducts(data.products)
-      console.log(data);
-    } catch (error) {
-      console.log(error.message)
-    }
-  }
-
-
-  useEffect(() => {
+  useEffect(()=>{
     getUsers()
-    getProducts()
-  }, [])
+  },[])
 
   return (
-    <View style={styles.body}>
-      <View  style={styles.Buttons}>
-        <Button
-          title="Add +2"
-          onPress={() => setCounter(counter + 2)}
-        />
-        <Button
-          title='Add +1'
-          onPress={() => setCounter(counter + 1)}
-        />
-        <Text style={{ color: '#FFF' }}>Valor: {counter}</Text>
-      </View>
-      <View style={styles.listUser}>
-        <H1 style={styles.usuariosH1}>Usuários</H1>
-        <FlatList
-          data={users}
-          renderItem={({ item }) => <CardUser user={item} />}
-          keyExtractor={item => item.id}
-          horizontal={true}
-        />
-      </View>
-      <View style={styles.listProduct}>
-        <H1 style={styles.usuariosH1}>Produtos</H1>
-        <FlatList
-          data={products}
-          renderItem={({ item }) => <CardProduct product={item} />}
-          keyExtractor={item => item.id}
-        />
-      </View>
+    <View>
+        <View style={styles.titleAdd}>
+          <H1 style={styles.usuariosH1}>Users</H1>
+          <Button title="Add User" onPress={() => navigation.navigate('Cadastrar', {users, setUsers})} />
+        </View>
+        
+        <View style={styles.listUser}>
+            {users.length ? 
+              <FlatList
+                data={users}
+                renderItem={({item}) => <CardUser user={item} />}
+                keyExtractor={item => item.id}
+                ListHeaderComponent={Header}
+              /> : 
+              <Text style={{color: '#FFF'}}>Loading...</Text>}
+        </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  body: {
-    flex: 3,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  Buttons: {
-    marginTop: 30
-  },
-  usuariosH1: {
-    marginTop: 20,
-    marginBottom: 20,
-    color: "#FFF"
-  },
-  listUser: {
-    height: 200,
-    marginBottom: 50
-  },
-  listProduct: {
-    height: 300,
-    marginBottom: 50
+    usuariosH1: {
+      marginBottom: 20,
+      color: "#FFF",
+    },
+    listUser:{
+      display: 'flex',
+      width: '100%',
+      alignItems: 'center',
+      marginBottom: 20,
+      height: 400
+    },
+    titleAdd:{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+    }
   }
-}
 )
 
 export default Body
